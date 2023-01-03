@@ -31,7 +31,7 @@ namespace VDS.RDF.Query
 {
     public static class ResultsHandlerExtensions
     {
-        internal static void Apply(this ISparqlResultsHandler handler, SparqlEvaluationContext context)
+        public static void Apply(this ISparqlResultsHandler handler, SparqlEvaluationContext context)
         {
             try
             {
