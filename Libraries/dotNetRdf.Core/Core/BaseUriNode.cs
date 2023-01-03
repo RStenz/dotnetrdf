@@ -41,6 +41,7 @@ namespace VDS.RDF
     {
         private Uri _uri;
         private readonly int _hashCode;
+        private readonly string _absoluteUri;
 
         /// <summary>
         /// Internal Only Constructor for URI Nodes.
@@ -50,15 +51,40 @@ namespace VDS.RDF
             : base(NodeType.Uri)
         {
             _uri = uri ?? throw new ArgumentNullException(nameof(uri));
+            _absoluteUri = _uri.AbsoluteUri;
 
             // Compute Hash Code
-            _hashCode = (_nodeType, _uri.AbsoluteUri).GetHashCode();
+            _hashCode = (_nodeType, _absoluteUri).GetHashCode();
         }
+
+        /// <summary>
+        /// Internal Only Constructor for URI Nodes.
+        /// Parameter absoluteUri must be checked before... 
+        /// </summary>
+        /// <param name="absoluteUri"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        protected internal BaseUriNode(string absoluteUri)
+           : base(NodeType.Uri)
+        {
+            _absoluteUri = absoluteUri ?? throw new ArgumentNullException(nameof(absoluteUri));
+            _uri = null;
+            // Compute Hash Code
+            _hashCode = (_nodeType, _absoluteUri).GetHashCode();
+        }
+
 
         /// <summary>
         /// Gets the Uri for this Node.
         /// </summary>
-        public virtual Uri Uri => _uri;
+        public virtual Uri Uri
+        {
+            get
+            {
+                if (_uri == null) 
+                    _uri = new Uri(_absoluteUri); 
+                return _uri;
+            }
+        }
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
@@ -106,9 +132,12 @@ namespace VDS.RDF
 
             if (other.NodeType == NodeType.Uri)
             {
+                if (other is BaseUriNode bnode)
+                    return _absoluteUri.Equals(bnode._absoluteUri);
+
                 Uri temp = ((IUriNode)other).Uri;
 
-                return EqualityHelper.AreUrisEqual(_uri, temp);
+                return EqualityHelper.AreUrisEqual(Uri, temp);
             }
 
             // Can only be equal to UriNodes
@@ -171,7 +200,10 @@ namespace VDS.RDF
 
             if (ReferenceEquals(this, other)) return true;
 
-            return EqualityHelper.AreUrisEqual(_uri, other.Uri);
+            if (other is BaseUriNode bnode)
+                return _absoluteUri.Equals(bnode._absoluteUri);
+
+            return EqualityHelper.AreUrisEqual(Uri, other.Uri);
         }
 
         /// <summary>
@@ -210,7 +242,7 @@ namespace VDS.RDF
         /// <returns></returns>
         public override string ToString()
         {
-            return _uri.AbsoluteUri;
+            return _absoluteUri;
         }
 
         /// <summary>
@@ -302,6 +334,9 @@ namespace VDS.RDF
         /// <returns></returns>
         public override int CompareTo(IUriNode other)
         {
+            if (other is BaseUriNode bnode)
+                return _absoluteUri.CompareTo(bnode._absoluteUri);
+
             return ComparisonHelper.CompareUris(Uri, other.Uri);
         }
 
@@ -334,7 +369,7 @@ namespace VDS.RDF
         /// <returns></returns>
         public string AsString()
         {
-            return _uri.AbsoluteUri;
+            return _absoluteUri;
         }
 
         /// <summary>

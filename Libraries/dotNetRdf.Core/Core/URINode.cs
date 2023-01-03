@@ -41,6 +41,12 @@ namespace VDS.RDF
         public UriNode(Uri uri) : base(uri) { }
 
         /// <summary>
+        /// Constructor for URI Nodes.
+        /// </summary>
+        /// <param name="uri">URI for the Node.</param>
+        public UriNode(string absoluteUri) : base(absoluteUri) { }
+
+        /// <summary>
         /// Implementation of Compare To for URI Nodes.
         /// </summary>
         /// <param name="other">URI Node to Compare To.</param>

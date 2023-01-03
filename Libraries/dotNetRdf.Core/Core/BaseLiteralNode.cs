@@ -40,6 +40,8 @@ namespace VDS.RDF
     {
         private readonly int _hashCode;
 
+        private static Uri _DataType = UriFactory.Root.Create(XmlSpecsHelper.XmlSchemaDataTypeString);
+
         /// <summary>
         /// Internal Only Constructor for Literal Nodes.
         /// </summary>
@@ -49,7 +51,7 @@ namespace VDS.RDF
             : base(NodeType.Literal)
         {
             Value = normalize ? literal.Normalize() : literal;
-            DataType = UriFactory.Root.Create(XmlSpecsHelper.XmlSchemaDataTypeString);
+            DataType = _DataType;
             _hashCode = ComputeHashCode();
         }
 
