@@ -3320,7 +3320,7 @@ namespace VDS.RDF.Query
 
         }
 
-        public BaseMultiset ProcessTriplePattern(TriplePattern triplePattern, SparqlEvaluationContext context)
+        public virtual BaseMultiset ProcessTriplePattern(TriplePattern triplePattern, SparqlEvaluationContext context)
         {
             context.Evaluate(triplePattern);
             return context.OutputMultiset;
